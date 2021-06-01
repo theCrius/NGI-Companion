@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Netgamers.it - Super Hide That!
 // @namespace    Netgamers.it
-// @version      1.3.2
+// @version      1.3.3
 // @description  Hide Topics and User's Content on demand.
 // @author       Crius
 // @grant        GM_getResourceText
