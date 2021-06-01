@@ -15,12 +15,12 @@
 // @require      https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/js/fontawesome.min.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/js/solid.min.js
 // ==/UserScript==
- 
+
 /* eslint-env jquery */
 'use strict';
- 
+
 let showHiddenTopics = false;
- 
+
 // Style Helper
 const addGlobalStyle = (css) => {
     var head, style;
@@ -31,15 +31,15 @@ const addGlobalStyle = (css) => {
     style.innerHTML = css;
     head.appendChild(style);
 }
- 
+
 // Custom Styles
 addGlobalStyle('.show-hidden-topics-container { padding-left: 1em; cursor: pointer; }')
 addGlobalStyle('.hide-topic-container { text-align:center; cursor: pointer;}');
 addGlobalStyle('.hide-user-topic-container { text-align: center; cursor: pointer; }');
 addGlobalStyle('.show-hidden-users-container { padding-top: 1em; text-align: center; cursor: pointer; }');
- 
+
 // MAIN
- 
+
 $(document).ready(() => {
     const currentPage = window.location.href;
     const jqueryUI = GM_getResourceText("JQUERYUI_CSS"); GM_addStyle(jqueryUI);
@@ -62,9 +62,9 @@ $(document).ready(() => {
         addShowHiddenUsers();
     }
 });
- 
+
 // LISTENERS
- 
+
 $(document).on('click', '[id*="hide-topic-"]', function() {
     console.log('Super Hide That! - Hide Topic ' + this.id.match(/\d+/));
     try {
@@ -75,7 +75,7 @@ $(document).on('click', '[id*="hide-topic-"]', function() {
         console.error(err);
     }
 });
- 
+
 $(document).on('click', '[id*="hide-user-"]', function() {
     const username = this.id.match(/hide-user-(.*)/)[1].trim();
     console.log('Super Hide That! - Hide User ' + username);
@@ -94,7 +94,7 @@ $(document).on('click', '[id*="hide-user-"]', function() {
         console.error(err);
     }
 });
- 
+
 $(document).on('click', '.show-hidden-users-link', function() {
     console.log('Super Hide That! - Showing Hidden Users');
     try {
@@ -112,7 +112,7 @@ $(document).on('click', '.show-hidden-users-link', function() {
         console.error(err);
     }
 });
- 
+
 $(document).on('click', '#manage-hidden-topics', function() {
     try {
         if (!showHiddenTopics) {
@@ -133,9 +133,9 @@ $(document).on('click', '#manage-hidden-topics', function() {
         console.error(err);
     }
 });
- 
+
 // HIDING LOGIC
- 
+
 function hideUserTopics() {
     //Load Hidden User Ids from storage
     let hiddenUserIds = loadUserIdsFromStorage();
@@ -147,7 +147,7 @@ function hideUserTopics() {
         }
     });
 }
- 
+
 function hideUserPosts() {
     //Load Hidden User Ids from storage
     let hiddenUserIds = loadUserIdsFromStorage();
@@ -159,7 +159,7 @@ function hideUserPosts() {
         }
     });
 }
- 
+
 function hideIgnoredUserPosts() {
     //Load Hidden User Ids from storage
     let hiddenUserIds = loadUserIdsFromStorage();
@@ -173,24 +173,21 @@ function hideIgnoredUserPosts() {
          });
     });
 }
- 
+
 function hideIgnoredUserQuotedPosts() {
     //Load Hidden User Ids from storage
     let hiddenUserIds = loadUserIdsFromStorage();
     const quotes = $('td.alt2[style="border:1px inset"]');
     $(quotes).children().each((index, el) => {
-        // Get the first children which contains the quoted message author
-        if (!(index % 2)) {
-            // Check against the ignored list
-            if ( hiddenUserIds.includes($(el).children('strong').text().trim()) ) {
-                // Replace name and quoted message
-                $(el).html('Originally Posted by <strong>Someone</strong> <img src="/images/buttons/viewpost.gif">')
-                $($(quotes).children().get(index + 1)).html('Nope, super hidden that! You\'re welcome!');
-            }
+        // Check against the ignored list
+        if ( hiddenUserIds.includes($(el).children('strong').text().trim()) ) {
+            // Replace name and quoted message
+            $(el).html('Originally Posted by <strong>Someone</strong> <img src="/images/buttons/viewpost.gif">')
+            $($(quotes).children().get(index + 1)).html('Nope, super hidden that! You\'re welcome!');
         }
     });
 }
- 
+
 function hideTopics() {
     //Load Hidden Topic Ids from storage
     let hiddenTopicIds = loadTopicIdsFromStorage();
@@ -202,9 +199,9 @@ function hideTopics() {
         }
     });
 }
- 
+
 // UI MODIFICATIONS
- 
+
 function addHideTopic() {
     // Create icons to hide topics for the remaining ones
     $('[id*="td_threadstatusicon_"]').append('<div class="hide-topic-container"><a class="hide-topic-link"><i class="fas fa-eye-slash"></i></a></div>');
@@ -213,11 +210,11 @@ function addHideTopic() {
         $('.hide-topic-link', this).attr('id','hide-topic-' + this.id.match(/\d+/));
     });
 }
- 
+
 function addShowHiddentTopics() {
     $('.tcat').children().append('<span class="show-hidden-topics-container"><a id="manage-hidden-topics" class="show-hidden-topics-link">(Show "Hidden Topics")</a></span>');
 }
- 
+
 function addHideUserContent() {
     const username = $('#username_box').children().first().children().first().text() || $('#username_box').children().first().text().trim();
     const userIdsFromStorage = loadUserIdsFromStorage();
@@ -229,7 +226,7 @@ function addHideUserContent() {
         $('.hide-user-link').attr('id','hide-user-' + username);
     }
 }
- 
+
 function addShowHiddenUsers() {
     $('#main_userinfo').append('<div class="show-hidden-users-container"><a class="show-hidden-users-link">Show Hidden Users</a></div>');
     $('#main_userinfo').append('<div id="hidden-users-dialog" title="Hidden Users"></div>');
@@ -252,9 +249,9 @@ function addShowHiddenUsers() {
       }
     });
 }
- 
+
 // LOCALSTORAGE MANAGEMENT
- 
+
 function saveTopicIdToStorage(topicId) {
     try {
         let hiddenTopicIds = loadTopicIdsFromStorage();
@@ -265,12 +262,12 @@ function saveTopicIdToStorage(topicId) {
         throw err;
     }
 }
- 
+
 function loadTopicIdsFromStorage() {
     const Ids = JSON.parse(localStorage.getItem('hiddenTopicIds'))
     return Ids ? Ids : [];
 }
- 
+
 function addUserIdToStorage(username) {
     try {
         let hiddenUserIds = loadUserIdsFromStorage();
@@ -281,7 +278,7 @@ function addUserIdToStorage(username) {
         throw err;
     }
 }
- 
+
 function delUserIdToStorage(username) {
     try {
         let hiddenUserIds = loadUserIdsFromStorage();
@@ -295,7 +292,7 @@ function delUserIdToStorage(username) {
         throw err;
     }
 }
- 
+
 function loadUserIdsFromStorage() {
     const Ids = JSON.parse(localStorage.getItem('hiddenUserIds'))
     return Ids ? Ids : [];
